@@ -30,8 +30,7 @@ email: 0xscater@gmail.com
 description: >-
   Smart Contract CTF Writeups, Exploits, and Security Research.
 
-
-baseurl: ""  
+baseurl: "/THE_5C4T3R" 
 url: "https://BLOCK-PROGRAMR.github.io" 
 
 plugins:
