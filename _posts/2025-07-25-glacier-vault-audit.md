@@ -2,7 +2,7 @@
 layout: post
 title: "GlacierVault CTF Challenge Audit"
 date: 2025-07-25
-categories: audit
+categories: audits
 ---
 
 This audit covers the GlacierVault CTF challenge.

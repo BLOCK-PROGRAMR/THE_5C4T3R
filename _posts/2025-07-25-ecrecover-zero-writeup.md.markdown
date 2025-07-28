@@ -2,7 +2,7 @@
 layout: post
 title: "Exploiting ecrecover to Return Zero Address"
 date: 2025-07-25
-categories: writeup
+categories: writeups
 tags: [ecrecover, zeroaddress]
 
 ---

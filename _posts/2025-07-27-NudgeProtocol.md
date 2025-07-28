@@ -2,7 +2,7 @@
 layout: post
 title: "Nudge Protocol Audit"
 date: 2025-07-25
-categories: audit
+categories: audits
 tags: [code4rena, audit]
 ---
  **Nudge Protocol Audit  Audit by SCATERLABs**
