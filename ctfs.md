@@ -1,0 +1,14 @@
+---
+layout: default
+title: Writeups
+permalink: /writeups/
+---
+
+<h1>Writeups</h1>
+<ul>
+  {% for post in site.categories.writeup %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a> - {{ post.date | date: "%Y-%m-%d" }}
+    </li>
+  {% endfor %}
+</ul>
