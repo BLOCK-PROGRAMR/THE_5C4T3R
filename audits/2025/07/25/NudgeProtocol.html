@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nudge Protocol Audit</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        /* --- FONTS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+        /* --- GENERAL BODY STYLES --- */
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: 'IBM Plex Mono', monospace;
+            margin: 0;
+            padding: 0;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* --- KEY CHANGE: HEADER LAYOUT --- */
+        header {
+            padding: 1rem;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .header-container {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            /* Space between name and nav links */
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            /* Space between social icons */
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.5rem;
+            /* Adjusted size for new layout */
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.25rem 0;
+            transition: color 0.2s ease-in-out;
+            font-family: 'Fira Code', monospace;
+        }
+
+        nav a:hover {
+            color: #ff4d4d;
+            text-decoration: underline;
+        }
+
+        /* --- KEY ADDITION: SOCIAL ICON STYLES --- */
+        .social-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: #CCCCCC;
+            transition: fill 0.2s ease-in-out;
+        }
+
+        .social-icon:hover svg {
+            fill: #ff4d4d;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            /* --- KEY CHANGE: Page extended left and right --- */
+            max-width: 960px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        a {
+            color: #FFFFFF;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: #ff4d4d;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Fira Code', monospace;
+            color: #FFFFFF;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+        }
+
+        /* --- STYLES FOR CODE BLOCKS AND COPY BUTTON --- */
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background-color: #1E1E1E;
+            border: 1px solid #333333;
+            padding: 1.5rem;
+            padding-top: 3rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #E0E0E0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 0.3rem 0.6rem;
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .copy-button:hover {
+            background-color: #444;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <h1><a href="/" style="text-decoration:none; color: inherit;">Nithin Kumar</a></h1>
+
+                <nav>
+                    <!-- <a href="/">Home</a> -->
+                    <a href="/writeups">Writeups</a>
+                    <a href="/analysis">Analysis</a>
+                    <a href="/audits">Audits</a>
+                    <a href="/projects">Projects</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/tags">Tags</a>
+                </nav>
+
+            </div>
+            <div class="header-right">
+                <a href="https://github.com/BLOCK-PROGRAMR" class="social-icon" title="GitHub">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/5C4T3R" class="social-icon" title="LinkedIn">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.15 0-2.08-.926-2.08-2.065 0-1.138.93-2.066 2.08-2.066 1.153 0 2.08.928 2.08 2.066 0 1.139-.928 2.065-2.08 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
+                    </svg>
+                </a>
+                <a href="https://x.com/0x_Scater" class="social-icon" title="X (Twitter)">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                    </svg>
+                </a>
+                <a href="mailto:0xscater@gmail.com" class="social-icon" title="Email">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Nudge Protocol Audit</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-07-25T00:00:00+00:00" itemprop="datePublished">Jul 25, 2025
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><strong>Nudge Protocol Audit  Audit by SCATERLABs</strong></p>
+
+<p><em>participated in code4rena</em></p>
+
+<hr />
+
+<h2 id="1-front-running-attack-in-handlereallocation">1. Front Running Attack in <code class="language-plaintext highlighter-rouge">handleReallocation</code></h2>
+
+<h3 id="description-">Description :</h3>
+<p>A front-running attack occurs when an attacker observes a pending transaction and submits a higher gas fee transaction to execute before the original. This can allow them to manipulate token swaps or reward distributions unfairly.</p>
+
+<h3 id="severity-medium">Severity: Medium</h3>
+
+<h3 id="impact">Impact</h3>
+<ul>
+  <li>Attackers can gain more rewards than intended.</li>
+  <li>Users may receive fewer rewards or lose funds.</li>
+</ul>
+
+<h3 id="proof-of-concept-poc">Proof of Concept (POC)</h3>
+
+<p><strong>Vulnerable Code:</strong></p>
+
+<pre><code class="language-solidity">function handleReallocation(
+    uint256 campaignId_,
+    address userAddress,
+    address toToken,
+    uint256 toAmount,
+    bytes memory data
+)
+    external
+    payable
+    whenNotPaused
+{
+    _validateAndActivateCampaignIfReady();
+    if (!factory.hasRole(factory.SWAP_CALLER_ROLE(), msg.sender)) {
+        revert UnauthorizedSwapCaller();
+    }
+    if (toToken != targetToken) {
+        revert InvalidToTokenReceived(toToken);
+    }
+    if (campaignId_ != campaignId) {
+        revert InvalidCampaignId();
+    }
+
+    uint256 amountReceived;
+    if (toToken == NATIVE_TOKEN) {
+        amountReceived = msg.value;
+    } else {
+        IERC20 tokenReceived = IERC20(toToken);
+        uint256 balanceBefore = getBalanceOfSelf(toToken);
+        SafeERC20.safeTransferFrom(tokenReceived, msg.sender, address(this), toAmount);
+        amountReceived = getBalanceOfSelf(toToken) - balanceBefore;
+    }
+
+    _transfer(toToken, userAddress, amountReceived);
+    totalReallocatedAmount += amountReceived;
+    uint256 rewardAmountIncludingFees = getRewardAmountIncludingFees(amountReceived);
+    uint256 rewardsAvailable = claimableRewardAmount();
+    if (rewardAmountIncludingFees &gt; rewardsAvailable) {
+        revert NotEnoughRewardsAvailable();
+    }
+
+    (uint256 userRewards, uint256 fees) = calculateUserRewardsAndFees(rewardAmountIncludingFees);
+    pendingRewards += userRewards;
+    accumulatedFees += fees;
+}
+</code></pre>
+
+<p><strong>Exploit Scenario:</strong></p>
+
+<ol>
+  <li>User A submits a transaction to reallocate tokens and receive rewards.</li>
+  <li>Attacker observes the transaction in the mempool.</li>
+  <li>Attacker submits a similar transaction with a higher gas fee.</li>
+  <li>Attacker drains the available rewards, leaving User A with nothing.</li>
+</ol>
+
+<p><strong>Foundry Test (POC):</strong></p>
+
+<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "forge-std/Test.sol";
+import "src/YourContract.sol";
+
+contract FrontRunningAttackTest is Test {
+    YourContract public contractInstance;
+    address attacker = address(0x1);
+    address victim = address(0x2);
+    
+    function setUp() public {
+        contractInstance = new YourContract();
+    }
+    
+    function testFrontRunning() public {
+        vm.startPrank(victim);
+        contractInstance.handleReallocation(1, victim, address(0xToken), 100, "");
+        vm.stopPrank();
+
+        vm.startPrank(attacker);
+        contractInstance.handleReallocation(1, attacker, address(0xToken), 200, "");
+        vm.stopPrank();
+
+        uint256 rewards = contractInstance.claimableRewardAmount();
+        assertEq(rewards, 0, "Victim received no rewards due to front-running.");
+    }
+}
+</code></pre>
+
+<h3 id="recommended-mitigations">Recommended Mitigations</h3>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">1.</span> Use a commit-reveal scheme: Prevent front-running by making users commit to inputs before revealing.
+<span class="p">2.</span> Implement gas price caps: Prevent transactions from cutting the queue based on gas price.
+<span class="p">3.</span> Batch process transactions: Handle all inputs fairly in a single round.
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="2-create2-address-prediction-attack">2. CREATE2 Address Prediction Attack</h2>
+
+<h3 id="description">Description</h3>
+<p>Contracts using <code class="language-plaintext highlighter-rouge">CREATE2</code> with predictable salts can be precomputed by attackers. Malicious contracts can be deployed to hijack funds sent to the expected address.</p>
+
+<h3 id="severity-high">Severity: High</h3>
+
+<h3 id="impact-1">Impact</h3>
+<ul>
+  <li>Attacker receives all initial reward funds.</li>
+  <li>Campaign contract deployment fails.</li>
+  <li>Total loss of campaign funds.</li>
+</ul>
+
+<h3 id="proof-of-concept-poc-1">Proof of Concept (POC)</h3>
+
+<p><strong>Vulnerable Code:</strong></p>
+
+<pre><code class="language-solidity">bytes32 salt = keccak256(
+    abi.encode(
+        holdingPeriodInSeconds,
+        targetToken,
+        rewardToken,
+        rewardPPQ,
+        campaignAdmin,
+        startTimestamp,
+        FEE_BPS,
+        alternativeWithdrawalAddress,
+        uuid
+    )
+);
+
+bytes memory bytecode = abi.encodePacked(type(NudgeCampaign).creationCode, constructorArgs);
+campaign = Create2.deploy(0, salt, bytecode);
+</code></pre>
+
+<p><strong>Exploit Scenario:</strong></p>
+
+<ol>
+  <li>Attacker precomputes the deployment address.</li>
+  <li>Attacker deploys malicious contract using the same salt.</li>
+  <li>Funds meant for the legitimate campaign are sent to the malicious contract.</li>
+  <li>Attacker withdraws and self-destructs.</li>
+</ol>
+
+<p><strong>Foundry Test:</strong></p>
+
+<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+import "forge-std/Test.sol";
+import "src/NudgeFactory.sol";
+import "src/NudgeCampaign.sol";
+
+contract Create2AttackTest is Test {
+    NudgeFactory factory;
+    address attacker;
+
+    function setUp() public {
+        factory = new NudgeFactory();
+        attacker = vm.addr(1);
+    }
+
+    function testCreate2Attack() public {
+        bytes32 salt = keccak256(abi.encode(3600, address(0x123), address(0x456), 1000, attacker, block.timestamp, 500, address(0x789), 1234));
+        address predicted = computeCreate2Address(salt, type(NudgeCampaign).creationCode, address(factory));
+        
+        vm.prank(attacker);
+        new MaliciousContract{salt: salt}();
+        
+        vm.expectRevert();
+        factory.deployAndFundCampaign(3600, address(0x123), address(0x456), 1000, attacker, block.timestamp, address(0x789), 1 ether, 1234);
+    }
+
+    function computeCreate2Address(bytes32 salt, bytes memory bytecode, address deployer) internal pure returns (address) {
+        return address(uint160(uint256(keccak256(abi.encodePacked(bytes1(0xff), deployer, salt, keccak256(bytecode))))));
+    }
+}
+
+contract MaliciousContract {
+    receive() external payable {}
+}
+</code></pre>
+
+<h3 id="recommended-mitigations-1">Recommended Mitigations</h3>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">1.</span> Use non-predictable salt:
+<span class="p">   -</span> Include randomness like blockhash or a nonce.
+<span class="p">2.</span> Check if address is already occupied:
+<span class="p">   -</span> Use <span class="sb">`isContract()`</span> to validate before deployment.
+
+   require(!isContract(predictedAddress), "Address already occupied");
+<span class="p">   
+
+3.</span> Deploy first, fund later:
+<span class="p">   -</span> Ensure contract was created successfully before transferring funds.
+</code></pre></div></div>
+<hr />
+
+<h2 id="3-precision-loss-due-to-integer-division">3. Precision Loss Due to Integer Division</h2>
+
+<h3 id="description-1">Description</h3>
+<p>Integer division in reward calculation can cause truncation, leading to small but cumulative precision losses.</p>
+
+<p><strong>Vulnerable Code:</strong></p>
+
+<pre><code class="language-solidity">uint256 finalReward = (rewardAmountIn18Decimals + rewardScalingFactor - 1) / rewardScalingFactor;
+</code></pre>
+
+<h3 id="severity-medium-1">Severity: Medium</h3>
+
+<h3 id="impact-2">Impact</h3>
+<ul>
+  <li>Users receive slightly fewer rewards</li>
+  <li>Accumulated loss over multiple users</li>
+  <li>Inconsistent reward distribution</li>
+</ul>
+
+<h3 id="proof-of-concept-poc-2">Proof of Concept (POC)</h3>
+
+<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.28;
+
+import "forge-std/Test.sol";
+
+contract PrecisionLossTest is Test {
+    function testPrecisionLoss() public {
+        uint256 rewardAmountIn18Decimals = 1005;
+        uint256 rewardScalingFactor = 100;
+        
+        uint256 finalReward = (rewardAmountIn18Decimals + rewardScalingFactor - 1) / rewardScalingFactor;
+        
+        assertEq(finalReward, 11, "Precision loss detected"); // Expected 11, may be 10 without rounding
+    }
+}
+</code></pre>
+
+<h3 id="recommended-mitigations-2">Recommended Mitigations</h3>
+
+<div class="language-md highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">1.</span> Use higher precision arithmetic:
+<span class="p">   -</span> Avoid truncation by multiplying first, dividing later.
+<span class="p">2.</span> Use <span class="sb">`Math.mulDiv()`</span> from OpenZeppelin:
+<span class="p">   -</span> Offers full-precision multiplication followed by division.
+<span class="p">3.</span> Use fixed-point math:
+<span class="p">   -</span> Store values in 18 decimals and round only when withdrawing.
+<span class="p">4.</span> Consider off-chain computation:
+<span class="p">   -</span> Move reward logic off-chain and just store outcome on-chain.
+</code></pre></div></div>
+
+<hr />
+
+<p><em>Link:</em>
+<a href="https://github.com/BLOCK-PROGRAMR/NudgeAuditingReport/blob/2f8e819e88937210c4b2b2a527a4a98e83da07e8/ScaterLabsReport.md">View this audit on GitHub</a></p>
+
+<p><em>downloadPdf:</em>
+<a href="./SCATERLABsReport.pdf">📄 Download Full Audit Report (PDF)</a></p>
+
+
+  </div><a class="u-url" href="/audits/2025/07/25/NudgeProtocol.html" hidden></a>
+</article>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const preBlocks = document.querySelectorAll('pre');
+            preBlocks.forEach(pre => {
+                if (pre.parentNode.classList.contains('code-container')) return; // Avoid re-wrapping
+                const container = document.createElement('div');
+                container.className = 'code-container';
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.textContent = 'Copy';
+                pre.parentNode.insertBefore(container, pre);
+                container.appendChild(pre);
+                container.appendChild(copyButton);
+                copyButton.addEventListener('click', () => {
+                    const code = pre.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyButton.textContent = 'Copy';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

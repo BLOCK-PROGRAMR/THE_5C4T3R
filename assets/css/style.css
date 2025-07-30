@@ -1,0 +1,19 @@
+.home {
+    max-width: 800px;
+    margin: 0 auto;
+    /* This centers the div horizontally */
+    padding: 2rem;
+    text-align: center;
+    /* This centers text like headings and paragraphs */
+}
+
+.home .post-list {
+    list-style: none;
+    padding: 0;
+}
+
+.home .post-list li {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1rem;
+}

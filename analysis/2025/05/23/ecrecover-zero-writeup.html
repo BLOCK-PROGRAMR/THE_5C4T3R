@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Understanding ECDSA Signatures in Blockchain: From Math to Wallets</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        /* --- FONTS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+        /* --- GENERAL BODY STYLES --- */
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: 'IBM Plex Mono', monospace;
+            margin: 0;
+            padding: 0;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* --- KEY CHANGE: HEADER LAYOUT --- */
+        header {
+            padding: 1rem;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .header-container {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            /* Space between name and nav links */
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            /* Space between social icons */
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.5rem;
+            /* Adjusted size for new layout */
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.25rem 0;
+            transition: color 0.2s ease-in-out;
+            font-family: 'Fira Code', monospace;
+        }
+
+        nav a:hover {
+            color: #ff4d4d;
+            text-decoration: underline;
+        }
+
+        /* --- KEY ADDITION: SOCIAL ICON STYLES --- */
+        .social-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: #CCCCCC;
+            transition: fill 0.2s ease-in-out;
+        }
+
+        .social-icon:hover svg {
+            fill: #ff4d4d;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            /* --- KEY CHANGE: Page extended left and right --- */
+            max-width: 960px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        a {
+            color: #FFFFFF;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: #ff4d4d;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Fira Code', monospace;
+            color: #FFFFFF;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+        }
+
+        /* --- STYLES FOR CODE BLOCKS AND COPY BUTTON --- */
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background-color: #1E1E1E;
+            border: 1px solid #333333;
+            padding: 1.5rem;
+            padding-top: 3rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #E0E0E0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 0.3rem 0.6rem;
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .copy-button:hover {
+            background-color: #444;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <h1><a href="/" style="text-decoration:none; color: inherit;">Nithin Kumar</a></h1>
+
+                <nav>
+                    <!-- <a href="/">Home</a> -->
+                    <a href="/writeups">Writeups</a>
+                    <a href="/analysis">Analysis</a>
+                    <a href="/audits">Audits</a>
+                    <a href="/projects">Projects</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/tags">Tags</a>
+                </nav>
+
+            </div>
+            <div class="header-right">
+                <a href="https://github.com/BLOCK-PROGRAMR" class="social-icon" title="GitHub">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/5C4T3R" class="social-icon" title="LinkedIn">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.15 0-2.08-.926-2.08-2.065 0-1.138.93-2.066 2.08-2.066 1.153 0 2.08.928 2.08 2.066 0 1.139-.928 2.065-2.08 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
+                    </svg>
+                </a>
+                <a href="https://x.com/0x_Scater" class="social-icon" title="X (Twitter)">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                    </svg>
+                </a>
+                <a href="mailto:0xscater@gmail.com" class="social-icon" title="Email">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Understanding ECDSA Signatures in Blockchain: From Math to Wallets</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-05-23T00:00:00+00:00" itemprop="datePublished">May 23, 2025
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h1 id="understanding-ecdsa-signatures-in-blockchain-from-math-to-wallets">Understanding ECDSA Signatures in Blockchain: From Math to Wallets</h1>
+
+<p>The backbone of blockchain is cryptography because it ensures data security, integrity, and trust without needing a central authority.</p>
+
+<p>One key innovation is ECDSA,which is used to Proof of ownership in Ethereum is achieved using public and private key pairs that are used to create digital signatures. Signatures are analogous to having to provide personal ID when withdrawing from the bank - the person needs to verify that they are the owner of the account.</p>
+
+<h3 id="what-is-ecdsa">What is ECDSA</h3>
+<p>The Elliptic Curve Digital Signature Algorithm (ECDSA) is based on Elliptic Curve Cryptography (ECC) and is used to generate keys, authenticate, sign, and verify messages</p>
+
+<p><strong>Signatures</strong> provide a means for authentication in blockchain technology, allowing operations, such as sending transactions, to be verified that they have originated from the intended signer</p>
+
+<h3 id="basics-of-elliptici-curve-cryptography">Basics Of Elliptici curve cryptography:</h3>
+
+<p>ECC is based on algebraic structures of elliptic curves over finite fields.
+Ethereum uses:</p>
+
+<blockquote>
+  <p>Curve: secp256k1</p>
+</blockquote>
+
+<blockquote>
+  <p>Equation: y² = x³ + 7 over a finite field F_p where p is a 256-bit prime.</p>
+</blockquote>
+
+<p>It’s a smooth, symmetric curve (about the x-axis). Every operation is modulo a large prime, so the curve becomes a finite set of points</p>
+
+<p>#### Graph Concept:</p>
+
+<p><img src="/assets/images/ECDSA.jpg" alt="ECDSA" /></p>
+
+<blockquote>
+  <p>Points on the curve can be added together geometrically.</p>
+</blockquote>
+
+<blockquote>
+  <p>Multiplying a point (e.g. G) repeatedly is called scalar multiplication and is used for key generation</p>
+</blockquote>
+
+<h4 id="visula-representation">Visula Representation:</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![ECDSA](../images/cycle.png)
+</code></pre></div></div>
+
+<h4 id="keygeneration">KeyGeneration:</h4>
+
+<blockquote>
+  <p>Private Key (p): A random number in [1, n-1], where n is the curve’s order.</p>
+</blockquote>
+
+<blockquote>
+  <p>Public Key (Q): A point on the curve computed by:
+      Q = p * G
+where G is the generator point (fixed for secp256k1).</p>
+</blockquote>
+
+<p><strong>Security Basis</strong>:
+It’s computationally infeasible to reverse:</p>
+
+<p>Given Q and G, it’s almost impossible to find p
+This is called the Elliptic Curve Discrete Logarithm Problem (ECDLP)</p>
+
+<h4 id="signing-mechanismrsand-v-are-formed">Signing Mechanism(r,s,and v are formed):</h4>
+
+<p><strong><em>Steps to create Signature Creation</em></strong>:</p>
+
+<p>msg: message (usually hashed using keccak256)</p>
+
+<p>p: private key</p>
+
+<p>n: order of the curve</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="na">steps </span><span class="pi">:</span>
+
+ <span class="s">1.Hash the message:h = keccak256(msg)</span>
+
+<span class="s">2.Generate a random nonce k (must be secret and unique every time!)</span>
+
+<span class="na">3.Compute random point R</span><span class="pi">:</span> <span class="s">R = k * G, take its x coordinate → r = R.x mod n  (Think of r like a fingerprint for that unique signature instance.)</span>
+
+<span class="na">4.Compute s</span><span class="pi">:</span> <span class="s">s = k⁻¹ * (h + r * p) mod n  (It ties your private key to the specific message hash securely.)</span>
+
+<span class="na">5.Compute v</span><span class="pi">:</span> <span class="s">The recovery ID, to tell which of the two possible public keys to recover.( helps Ethereum get the signer's address using ecrecover().     )</span>
+<span class="s">v = 27 + recovery_id → 27 or </span><span class="m">28</span>
+
+<span class="err">*</span><span class="nv">*Final</span> <span class="s">Signature = (r, s, v)**</span>
+</code></pre></div></div>
+
+<h4 id="signature-verification">Signature Verification:</h4>
+<p>Use (r, s, v) to verify that the signer owns the private key.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">In Ethereum</span><span class="pi">:</span>
+
+<span class="s">1.Recompute h = keccak256(msg)</span>
+
+<span class="na">2.Compute</span><span class="pi">:</span>
+<span class="s">u1 = s⁻¹ * h mod n</span>
+<span class="s">u2 = s⁻¹ * r mod n</span>
+
+<span class="na">3.Compute point</span><span class="pi">:</span>
+<span class="s">R' = u1 * G + u2 * Q</span>
+
+<span class="s">4.If R'.x mod n == r, the signature is valid</span>
+
+</code></pre></div></div>
+<p>On-chain in ethereum:</p>
+<pre><code class="language-solidity">address signer = ecrecover(hash, v, r, s);
+
+</code></pre>
+<h4 id="why-ecdsa-is-better-for-now">Why ECDSA is Better (for now)</h4>
+
+<p>1.Smaller keys/signatures than RSA</p>
+
+<p>2.Efficient on-chain operations (especially in Ethereum)</p>
+
+<p>3.Widely adopted (Bitcoin, Ethereum, etc.)</p>
+
+<p>4.But: vulnerable to quantum computing in the long term</p>
+
+<h3 id="why-ecdsa-needed-in-blockchain">Why ECDSA needed in Blockchain</h3>
+
+<p>ECDSA is used in blockchain to securely sign transactions so that only the person with the private key can authorize actions, and everyone else can verify it using the public key — ensuring authenticity, integrity, and non-repudiation of data without a central authority.</p>
+
+<p>In simple terms:</p>
+
+<p>ECDSA proves “I am the owner of this wallet” without revealing your private key, which is essential for trust and security in a decentralized network.</p>
+
+<h3 id="how-it-works-">How it works :</h3>
+<p>let us take an example to understand the ECDSA in ethereum:</p>
+
+<p>Nithinkumar wants to send 1 ETH to Uday. He uses an Ethereum wallet (e.g., MetaMask) to sign the transaction.</p>
+
+<p>1.Message to be signed (Transaction Data):</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">{</span>
+  <span class="s2">"</span><span class="s">to"</span><span class="pi">:</span> <span class="s2">"</span><span class="s">0xBobAddress"</span><span class="pi">,</span>
+  <span class="s2">"</span><span class="s">value"</span><span class="pi">:</span> <span class="nv">1 ETH</span><span class="pi">,</span>
+  <span class="s2">"</span><span class="s">nonce"</span><span class="pi">:</span> <span class="nv">0</span><span class="pi">,</span>
+  <span class="s2">"</span><span class="s">gasPrice"</span><span class="pi">:</span> <span class="nv">20 Gwei</span><span class="pi">,</span>
+  <span class="s2">"</span><span class="s">gasLimit"</span><span class="pi">:</span> <span class="nv">21000</span>
+<span class="pi">}</span>
+</code></pre></div></div>
+<p>2.The wallet hashes the transaction and signs it using Alice’s private key with ECDSA, producing a signature:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="s">Signature = (r, s, v)</span>
+</code></pre></div></div>
+<p>3.This signed transaction is broadcasted to the Ethereum network.
+ 4.Ethereum nodes receive the transaction, use the (r, s, v) values to:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      Every Ethereum transaction includes:
+       
+        to address
+        value
+        nonce
+        gasPrice
+        gasLimit
+        data
+        And the signature (r, s, v)
+</code></pre></div></div>
+
+<p>The node takes all of the transaction fields except the signature, and computes a Keccak256 hash of this transaction — let’s call it msgHash.</p>
+
+<p>Using msgHash and the (r, s, v) values, the node uses the ECDSA recovery algorithm to reconstruct the public key that created the signature.</p>
+
+<pre><code class="language-solidity">publicKey = ecrecover(msgHash, v, r, s)//This is a standard algorithm available in Ethereum and cryptography libraries.
+
+</code></pre>
+<p><strong>derive the ethereum address using public key</strong>
+Once the public key is recovered:</p>
+
+<p>Ethereum Address: Last 20 bytes of keccak256(public key)</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">Use the secp256k1 curve and multiply the private key with the generator point G</span><span class="pi">:</span>
+
+<span class="s">publicKey = privateKey * G</span>
+
+<span class="s">Public key is a 128-character hexadecimal (512 bits) if uncompressed (starts with 0x04 + x + y).</span>
+
+<span class="s">Hash only the x and y part (not the 0x04 prefix).</span>
+
+<span class="s">keccak256(publicKey[1:])  // public key without 0x04 prefix</span>
+
+<span class="s">ethereum address = last_20_bytes(keccak256(pubkey))</span>
+
+</code></pre></div></div>
+
+<p>This produces a 20-byte (40-hex-character) Ethereum address.</p>
+
+<p>5.Verify that the recovered address matches the sender’s address in the transaction.</p>
+
+<p>If the signature is valid and Nithinkumar has enough ETH, the transaction is accepted and mined into a block.</p>
+
+<h3 id="security-concerns-">Security Concerns :</h3>
+
+<h4 id="replay-attack">Replay Attack:</h4>
+
+<p>Why Malleability Happens:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">Due to curve symmetry, two values of s can produce valid signatures</span><span class="err">:</span>
+    <span class="s">s</span>
+    <span class="s">n - s</span>
+</code></pre></div></div>
+<p>Both are valid, allowing attackers to create a second signature without the private key.</p>
+
+<blockquote>
+  <p>This allows replay attacks across networks (Ethereum ↔ BSC) or in contracts that don’t check strict signature formats.</p>
+</blockquote>
+
+<h4 id="how-to-prevent-">How to Prevent :</h4>
+
+<p>1.Enforce low s values: s ≤ n/2</p>
+
+<p>2.Normalize signatures before verifying</p>
+
+<p>3.Use EIP-155 to include chain ID in transactions</p>
+
+<h4 id="how-private-keys-can-be-stolenif-u-neglect-the-nonce-">How Private Keys Can Be Stolen(if u neglect the nonce) :</h4>
+<p>ECDSA is secure only if:</p>
+
+<blockquote>
+  <p>⚠️ Never reuse the same nonce <code class="language-plaintext highlighter-rouge">k</code> — this will leak your private key!</p>
+</blockquote>
+
+<p>Private Key Leaks Happen If:
+   Same k reused → Attacker can compute p directly!</p>
+
+<p>Predictable k (bad RNG) → s becomes solvable</p>
+
+<p>Weak entropy during key generation</p>
+
+<h4 id="exploit-case">Exploit case:</h4>
+<p>If two signatures have the same r, attacker can solve for k, then back-calculate p.
+given:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>s1 = k⁻¹ * (h1 + r * p)
+s2 = k⁻¹ * (h2 + r * p)
+
+</code></pre></div></div>
+<p>Subtract:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>s1 - s2 = k⁻¹ * (h1 - h2)
+⇒ k = (h1 - h2) / (s1 - s2)
+⇒ p = ((s * k - h) / r) mod n
+</code></pre></div></div>
+<p><strong><em>Attacker got the private Key game over</em></strong></p>
+
+<h3 id="conclusion">Conclusion:</h3>
+
+<p>ECDSA keeps blockchain transactions safe and verified.</p>
+
+<p>It proves who owns a wallet without showing the private key.</p>
+
+<p>In this blog, we saw how ECDSA works and why it’s used in blockchains like Bitcoin and Ethereum. It’s what makes sure only the real owner can send crypto.</p>
+
+<p>It’s a small part of crypto, but very important for trust.</p>
+
+  </div><a class="u-url" href="/analysis/2025/05/23/ecrecover-zero-writeup.html" hidden></a>
+</article>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const preBlocks = document.querySelectorAll('pre');
+            preBlocks.forEach(pre => {
+                if (pre.parentNode.classList.contains('code-container')) return; // Avoid re-wrapping
+                const container = document.createElement('div');
+                container.className = 'code-container';
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.textContent = 'Copy';
+                pre.parentNode.insertBefore(container, pre);
+                container.appendChild(pre);
+                container.appendChild(copyButton);
+                copyButton.addEventListener('click', () => {
+                    const code = pre.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyButton.textContent = 'Copy';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

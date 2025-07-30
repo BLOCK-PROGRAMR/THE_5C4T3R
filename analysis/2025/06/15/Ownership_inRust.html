@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Understanding Rust Ownership: What Makes Rust Unique</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        /* --- FONTS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+        /* --- GENERAL BODY STYLES --- */
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: 'IBM Plex Mono', monospace;
+            margin: 0;
+            padding: 0;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* --- KEY CHANGE: HEADER LAYOUT --- */
+        header {
+            padding: 1rem;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .header-container {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            /* Space between name and nav links */
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            /* Space between social icons */
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.5rem;
+            /* Adjusted size for new layout */
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.25rem 0;
+            transition: color 0.2s ease-in-out;
+            font-family: 'Fira Code', monospace;
+        }
+
+        nav a:hover {
+            color: #ff4d4d;
+            text-decoration: underline;
+        }
+
+        /* --- KEY ADDITION: SOCIAL ICON STYLES --- */
+        .social-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: #CCCCCC;
+            transition: fill 0.2s ease-in-out;
+        }
+
+        .social-icon:hover svg {
+            fill: #ff4d4d;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            /* --- KEY CHANGE: Page extended left and right --- */
+            max-width: 960px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        a {
+            color: #FFFFFF;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: #ff4d4d;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Fira Code', monospace;
+            color: #FFFFFF;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+        }
+
+        /* --- STYLES FOR CODE BLOCKS AND COPY BUTTON --- */
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background-color: #1E1E1E;
+            border: 1px solid #333333;
+            padding: 1.5rem;
+            padding-top: 3rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #E0E0E0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 0.3rem 0.6rem;
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .copy-button:hover {
+            background-color: #444;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <h1><a href="/" style="text-decoration:none; color: inherit;">Nithin Kumar</a></h1>
+
+                <nav>
+                    <!-- <a href="/">Home</a> -->
+                    <a href="/writeups">Writeups</a>
+                    <a href="/analysis">Analysis</a>
+                    <a href="/audits">Audits</a>
+                    <a href="/projects">Projects</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/tags">Tags</a>
+                </nav>
+
+            </div>
+            <div class="header-right">
+                <a href="https://github.com/BLOCK-PROGRAMR" class="social-icon" title="GitHub">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/5C4T3R" class="social-icon" title="LinkedIn">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.15 0-2.08-.926-2.08-2.065 0-1.138.93-2.066 2.08-2.066 1.153 0 2.08.928 2.08 2.066 0 1.139-.928 2.065-2.08 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
+                    </svg>
+                </a>
+                <a href="https://x.com/0x_Scater" class="social-icon" title="X (Twitter)">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                    </svg>
+                </a>
+                <a href="mailto:0xscater@gmail.com" class="social-icon" title="Email">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Understanding Rust Ownership: What Makes Rust Unique</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-06-15T00:00:00+00:00" itemprop="datePublished">Jun 15, 2025
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h1 id="understanding-rust-ownership-what-makes-rust-unique">Understanding Rust Ownership: What Makes Rust Unique</h1>
+
+<p>Rust’s ownership model is what makes it stand out from other languages. Unlike languages that use garbage collection (like Java or Go), Rust enforces memory safety <strong>at compile time</strong> without needing a runtime.</p>
+
+<hr />
+
+<h2 id="rust-ownership-the-heart-of-its-memory-model">Rust Ownership: The Heart of Its Memory Model</h2>
+
+<p>Rust’s ownership rules ensure memory is managed safely and efficiently, eliminating common bugs like dangling pointers, data races, or double frees.</p>
+
+<h3 id="the-three-ownership-rules">The Three Ownership Rules</h3>
+
+<ol>
+  <li><strong>Each value in Rust has a single owner.</strong></li>
+  <li><strong>When the owner goes out of scope, the value is automatically dropped.</strong></li>
+  <li>
+    <p><strong>A value can be:</strong></p>
+
+    <ul>
+      <li>moved,</li>
+      <li>borrowed immutably (any number of times),</li>
+      <li>or borrowed mutably (only once at a time).</li>
+    </ul>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="moving-ownership">Moving Ownership</h2>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">s1</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span> <span class="c1">// s1 owns the String</span>
+    <span class="k">let</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">s1</span><span class="p">;</span> <span class="c1">// ownership moves to s2</span>
+
+    <span class="c1">// println!("{}", s1); //  Error! s1 no longer owns the String</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">s2</span><span class="p">);</span> <span class="c1">//  OK</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="explanation">Explanation:</h3>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">s1</code> owns the string initially.</li>
+  <li>When assigned to <code class="language-plaintext highlighter-rouge">s2</code>, ownership is <strong>moved</strong>, not copied.</li>
+  <li><code class="language-plaintext highlighter-rouge">s1</code> is now invalid; using it will cause a <strong>compile-time error</strong>.</li>
+</ol>
+
+<hr />
+
+<h2 id="-borrowing-with-references">🤁 Borrowing with References</h2>
+
+<p>If you want to access data without taking ownership, <strong>borrow</strong> it using references.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">s1</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+    <span class="nf">print_length</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s1</span><span class="p">);</span> <span class="c1">// Pass a reference</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">s1</span><span class="p">);</span> <span class="c1">//  Still valid!</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">print_length</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">String</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Length is: {}"</span><span class="p">,</span> <span class="n">s</span><span class="nf">.len</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="explanation-1">Explanation:</h3>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">&amp;s1</code> is an <strong>immutable reference</strong>.</li>
+  <li>You can have <strong>multiple</strong> immutable references at the same time.</li>
+  <li><code class="language-plaintext highlighter-rouge">s1</code> retains ownership.</li>
+</ol>
+
+<hr />
+
+<h2 id="mutable-references-only-one-at-a-time">Mutable References (Only One at a Time)</h2>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+    <span class="nf">change</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">s</span><span class="p">);</span> <span class="c1">// Mutable borrow</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">change</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="nb">String</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">s</span><span class="nf">.push_str</span><span class="p">(</span><span class="s">", world"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="explanation-2">Explanation:</h3>
+
+<ol>
+  <li>Only <strong>one mutable reference</strong> is allowed at a time.</li>
+  <li>This rule prevents <strong>data races</strong> at compile time.</li>
+</ol>
+
+<hr />
+
+<h2 id="what-happens-if-you-try-two-mutable-borrows">What Happens If You Try Two Mutable Borrows?</h2>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+
+    <span class="k">let</span> <span class="n">r1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">r2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// Error: cannot borrow `s` as mutable more than once at a time</span>
+
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}, {}"</span><span class="p">,</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Rust will stop this code from compiling, ensuring safe access.</p>
+
+<hr />
+
+<h2 id="lifetimes-in-rust">Lifetimes in Rust</h2>
+
+<p><strong>Lifetimes</strong> are how Rust ensures that references are always valid. They don’t change how long data lives — they simply <strong>tell the compiler</strong> how long a reference is guaranteed to be valid.</p>
+
+<hr />
+
+<h3 id="why-are-lifetimes-needed">Why Are Lifetimes Needed?</h3>
+
+<p>Here’s an example that doesn’t compile:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">get_str</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nb">String</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+    <span class="o">&amp;</span><span class="n">s</span> <span class="c1">//  Error!</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>Error:</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>error[E0515]: cannot return reference to local variable `s`
+</code></pre></div></div>
+
+<p>This fails because <code class="language-plaintext highlighter-rouge">s</code> is dropped when the function ends — returning a reference to it would be a <strong>dangling pointer</strong>.</p>
+
+<hr />
+
+<h3 id="example-using-lifetimes">Example Using Lifetimes</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">s1</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"apple"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">s2</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"banana"</span><span class="p">);</span>
+
+    <span class="k">let</span> <span class="n">result</span> <span class="o">=</span> <span class="nf">longest</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">s2</span><span class="p">);</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Longest: {}"</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="n">longest</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="nb">str</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="nb">str</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">x</span><span class="nf">.len</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">y</span><span class="nf">.len</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">x</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">y</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="explanation-3">Explanation:</h3>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">'a</code> is a <strong>lifetime annotation</strong> that says:</p>
+
+    <ul>
+      <li>The returned reference will be valid as long as both input references are.</li>
+    </ul>
+  </li>
+  <li>
+    <p>You must write lifetimes when the compiler can’t infer them — especially when returning references from a function.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="lifetimes">Lifetimes</h2>
+
+<ol>
+  <li>Lifetimes help Rust verify reference safety at compile time.</li>
+  <li>Most of the time, Rust <strong>infers lifetimes</strong> for you using <em>lifetime elision rules</em>.</li>
+  <li>
+    <p>You need to explicitly annotate lifetimes when:</p>
+
+    <ul>
+      <li>Returning references from functions.</li>
+      <li>Working with structs that store references.</li>
+    </ul>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<ul>
+  <li>Rust’s ownership and borrowing system manages memory <strong>without a garbage collector</strong>.</li>
+  <li>You can <strong>move</strong>, <strong>borrow</strong>, or <strong>mutably borrow</strong> values, but under strict rules.</li>
+  <li>Only one mutable reference allowed at a time to avoid data races.</li>
+  <li>Lifetimes ensure references stay valid, especially when returning them from functions.</li>
+  <li>Most of the time, you don’t need to write lifetimes manually — but when you do, they make your code <strong>safe and predictable</strong>.</li>
+</ul>
+
+  </div><a class="u-url" href="/analysis/2025/06/15/Ownership_inRust.html" hidden></a>
+</article>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const preBlocks = document.querySelectorAll('pre');
+            preBlocks.forEach(pre => {
+                if (pre.parentNode.classList.contains('code-container')) return; // Avoid re-wrapping
+                const container = document.createElement('div');
+                container.className = 'code-container';
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.textContent = 'Copy';
+                pre.parentNode.insertBefore(container, pre);
+                container.appendChild(pre);
+                container.appendChild(copyButton);
+                copyButton.addEventListener('click', () => {
+                    const code = pre.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyButton.textContent = 'Copy';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

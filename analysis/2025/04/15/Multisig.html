@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis of MultsigWallet</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        /* --- FONTS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+        /* --- GENERAL BODY STYLES --- */
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: 'IBM Plex Mono', monospace;
+            margin: 0;
+            padding: 0;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* --- KEY CHANGE: HEADER LAYOUT --- */
+        header {
+            padding: 1rem;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .header-container {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            /* Space between name and nav links */
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            /* Space between social icons */
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.5rem;
+            /* Adjusted size for new layout */
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #CCCCCC;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.25rem 0;
+            transition: color 0.2s ease-in-out;
+            font-family: 'Fira Code', monospace;
+        }
+
+        nav a:hover {
+            color: #ff4d4d;
+            text-decoration: underline;
+        }
+
+        /* --- KEY ADDITION: SOCIAL ICON STYLES --- */
+        .social-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: #CCCCCC;
+            transition: fill 0.2s ease-in-out;
+        }
+
+        .social-icon:hover svg {
+            fill: #ff4d4d;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            /* --- KEY CHANGE: Page extended left and right --- */
+            max-width: 960px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        a {
+            color: #FFFFFF;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: #ff4d4d;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Fira Code', monospace;
+            color: #FFFFFF;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+        }
+
+        /* --- STYLES FOR CODE BLOCKS AND COPY BUTTON --- */
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background-color: #1E1E1E;
+            border: 1px solid #333333;
+            padding: 1.5rem;
+            padding-top: 3rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            border-radius: 5px;
+            margin: 1.5rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #333;
+            color: #E0E0E0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 0.3rem 0.6rem;
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .copy-button:hover {
+            background-color: #444;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <h1><a href="/" style="text-decoration:none; color: inherit;">Nithin Kumar</a></h1>
+
+                <nav>
+                    <!-- <a href="/">Home</a> -->
+                    <a href="/writeups">Writeups</a>
+                    <a href="/analysis">Analysis</a>
+                    <a href="/audits">Audits</a>
+                    <a href="/projects">Projects</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/tags">Tags</a>
+                </nav>
+
+            </div>
+            <div class="header-right">
+                <a href="https://github.com/BLOCK-PROGRAMR" class="social-icon" title="GitHub">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/5C4T3R" class="social-icon" title="LinkedIn">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.15 0-2.08-.926-2.08-2.065 0-1.138.93-2.066 2.08-2.066 1.153 0 2.08.928 2.08 2.066 0 1.139-.928 2.065-2.08 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
+                    </svg>
+                </a>
+                <a href="https://x.com/0x_Scater" class="social-icon" title="X (Twitter)">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                    </svg>
+                </a>
+                <a href="mailto:0xscater@gmail.com" class="social-icon" title="Email">
+                    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Analysis of MultsigWallet</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-04-15T00:00:00+00:00" itemprop="datePublished">Apr 15, 2025
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h1 id="multisigwallet">MultisigWallet</h1>
+
+<p><strong><em>purpose</em></strong>:</p>
+
+<p>This contract implements a Multi-signature Wallet that allows a group of owners to collectively manage and authorize transactions. A transaction can only be executed when a specified number of owners approve it.</p>
+
+<h3 id="functionalities-of-multisigcontract">Functionalities of MultisigContract:</h3>
+
+<p>1.Owners: Only designated owners can submit, confirm, execute, or revoke transactions.</p>
+
+<p>2.Submit Transaction: An owner proposes a transaction.</p>
+
+<p>3.Confirm Transaction: Other owners must confirm the transaction.</p>
+
+<p>4.Execute Transaction: Once the required number of confirmations is met, the transaction can be executed.</p>
+
+<p>5.Revoke Confirmation: An owner can revoke their confirmation before execution.</p>
+
+<p>6.Deposit: Ether can be deposited into the wallet.</p>
+
+<h3 id="about-the-contract">About the Contract::</h3>
+<p>This is a simple Multi-signature contract that allows a set of designated owners to approve transactions before they can be executed.</p>
+
+<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract MultisigWallet {
+    address[] public owners; // Owners of the multisig wallet who can approve transactions
+
+    mapping(address =&gt; bool) public isOwner;
+    uint public required;
+
+    struct Transaction {
+        address to;
+        uint value;
+        bytes data;
+        bool executed;
+        uint numConfirmations;
+    }
+
+    Transaction[] public transactions;
+
+    mapping(uint =&gt; mapping(address =&gt; bool)) public isConfirmed;
+
+    // --- Events ---
+    event Deposit(address indexed sender, uint amount);
+    event Submit(
+        uint indexed txIndex,
+        address indexed to,
+        uint value,
+        bytes data
+    );
+    event Confirm(uint indexed txIndex, address indexed owner);
+    event Execute(uint indexed txIndex);
+    event Revoke(uint indexed txIndex, address indexed owner);
+
+    // --- Modifiers ---
+    modifier onlyOwner() {
+        require(isOwner[msg.sender], "Not owner");
+        _;
+    }
+
+    modifier txExists(uint _txIndex) {
+        require(_txIndex &lt; transactions.length, "Tx doesn't exist");
+        _;
+    }
+
+    modifier notExecuted(uint _txIndex) {
+        require(!transactions[_txIndex].executed, "Already executed");
+        _;
+    }
+
+    modifier notConfirmed(uint _txIndex) {
+        require(!isConfirmed[_txIndex][msg.sender], "Already confirmed");
+        _;
+    }
+
+    // --- Constructor ---
+    constructor(address[] memory _owners, uint _required) {
+        require(_owners.length &gt; 0, "Owners required");
+        require(
+            _required &gt; 0 &amp;&amp; _required &lt;= _owners.length,
+            "Invalid required"
+        ); // Sets the number of required confirmations for executing a transaction
+
+
+        for (uint i; i &lt; _owners.length; i++) {
+            address owner = _owners[i];
+            //@nkdoubt://what is the use of zero address in ethereum and significance of zero address?
+            require(owner != address(0), "Invalid owner");
+            require(!isOwner[owner], "Owner not unique");
+            isOwner[owner] = true;
+            owners.push(owner);
+        }
+
+        required = _required;
+    }
+
+    // --- Functions ---
+
+    receive() external payable {
+        emit Deposit(msg.sender, msg.value); // When anyone deposits Ether into the contract, it will be recorded in the event log
+
+    }
+
+    function submitTransaction(
+        address _to,
+        uint _value,
+        bytes memory _data
+    ) public onlyOwner {
+        uint txIndex = transactions.length;
+
+        transactions.push(
+            Transaction({
+                to: _to,
+                value: _value,
+                data: _data,
+                executed: false,
+                numConfirmations: 0
+            })
+        );
+
+        emit Submit(txIndex, _to, _value, _data);
+    }
+
+    function confirmTransaction(
+        uint _txIndex
+    )
+        public
+        onlyOwner
+        txExists(_txIndex)
+        notExecuted(_txIndex)
+        notConfirmed(_txIndex)
+    {
+        Transaction storage transaction = transactions[_txIndex];
+        transaction.numConfirmations += 1;
+        isConfirmed[_txIndex][msg.sender] = true;
+
+        emit Confirm(_txIndex, msg.sender);
+    }
+
+    function executeTransaction(
+        uint _txIndex
+    ) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) {
+        Transaction storage transaction = transactions[_txIndex];
+        require(
+            transaction.numConfirmations &gt;= required,
+            "Not enough confirmations"
+        );
+
+        transaction.executed = true;
+
+        (bool success, ) = transaction.to.call{value: transaction.value}(
+            transaction.data
+        );
+        require(success, "Tx failed");
+
+        emit Execute(_txIndex);
+    }
+
+    function revokeConfirmation(
+        uint _txIndex
+    ) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) {
+        require(isConfirmed[_txIndex][msg.sender], "Tx not confirmed");
+
+        Transaction storage transaction = transactions[_txIndex];
+        transaction.numConfirmations -= 1;
+        isConfirmed[_txIndex][msg.sender] = false;
+
+        emit Revoke(_txIndex, msg.sender);
+    }
+
+    // Utility functions
+    function getOwners() public view returns (address[] memory) {
+        return owners;
+    }
+
+    function getTransactionCount() public view returns (uint) {
+        return transactions.length;
+    }
+
+    function getTransaction(
+        uint _txIndex
+    )
+        public
+        view
+        returns (
+            address to,
+            uint value,
+            bytes memory data,
+            bool executed,
+            uint numConfirmations
+        )
+    {
+        Transaction storage transaction = transactions[_txIndex];
+        return (
+            transaction.to,
+            transaction.value,
+            transaction.data,
+            transaction.executed,
+            transaction.numConfirmations
+        );
+    }
+}
+</code></pre>
+
+<h4 id="vulnerability-scenario">Vulnerability Scenario:</h4>
+
+<p>If an attacker is one of the owners, they may try to:</p>
+
+<p>1.Submit malicious transactions (e.g., to their own wallet).</p>
+
+<p>2.Revoke confirmations repeatedly to prevent quorum.</p>
+
+<p>3.Spam the contract with transactions to exhaust gas or memory.</p>
+
+<p>4.Trigger reentrancy attacks if executeTransaction() is not protected.</p>
+
+<p>5.Abuse revokeConfirmation() to manipulate the confirmation state rapidly.</p>
+
+<p><strong>Fix the contract</strong>:</p>
+
+<blockquote>
+  <p>nonReentrant Modifier: Prevents reentrancy attacks during transaction execution.</p>
+</blockquote>
+
+<blockquote>
+  <p>require(_to != address(this)): Prevents self-calls that could manipulate internal state or reenter functions.</p>
+</blockquote>
+
+<blockquote>
+  <p>revokeCooldown using lastRevokeTime : Imposes a slowdown (e.g., 30 seconds) between consecutive revokes by the same owner.</p>
+</blockquote>
+
+<blockquote>
+  <p>max pending transactions : Prevents spamming of the contract by limiting the total number of unexecuted transactions.</p>
+</blockquote>
+
+<blockquote>
+  <p>require(unique owners) : Enforces that all owners are valid and unique, rejecting zero-address or duplicates.</p>
+</blockquote>
+
+<h3 id="updated-contract">Updated contract:</h3>
+<p>After all these udpates ,the contract looks like:</p>
+<pre><code class="language-solidity">//SPDX-Licnese-Identifier:MIT
+pragma solidity ^0.8.20;
+
+contract MultisigWallet {
+    address[] public owners;
+    mapping(address =&gt; bool) public isOwner;
+    uint public required;
+
+    struct Transaction {
+        address to;
+        uint value;
+        bytes data;
+        bool executed;
+        uint numConfirmations;
+        uint timestamp;
+    }
+
+    Transaction[] public transactions;
+    mapping(uint =&gt; mapping(address =&gt; bool)) public isConfirmed;
+    mapping(address =&gt; uint) public lastRevokeTime;
+
+    bool private locked;// Used to prevent reentrancy attacks
+
+
+    // --- Events ---
+    event Deposit(address indexed sender, uint amount);
+    event Submit(
+        uint indexed txIndex,
+        address indexed to,
+        uint value,
+        bytes data
+    );
+    event Confirm(uint indexed txIndex, address indexed owner);
+    event Execute(uint indexed txIndex);
+    event Revoke(uint indexed txIndex, address indexed owner);
+
+    // --- Modifiers ---
+    modifier onlyOwner() {
+        require(isOwner[msg.sender], "Not owner");
+        _;
+    }
+
+    modifier txExists(uint _txIndex) {
+        require(_txIndex &lt; transactions.length, "Tx doesn't exist");
+        _;
+    }
+
+    modifier notExecuted(uint _txIndex) {
+        require(!transactions[_txIndex].executed, "Already executed");
+        _;
+    }
+
+    modifier notConfirmed(uint _txIndex) {
+        require(!isConfirmed[_txIndex][msg.sender], "Already confirmed");
+        _;
+    }
+//added for reentrancy
+    modifier nonReentrant() {
+        require(!locked, "Reentrancy detected");
+        locked = true;
+        _;
+        locked = false;
+    }
+
+    // --- Constructor ---
+    constructor(address[] memory _owners, uint _required) {
+        require(_owners.length &gt; 0, "Owners required");
+        require(
+            _required &gt; 0 &amp;&amp; _required &lt;= _owners.length,
+            "Invalid required"
+        );
+
+        for (uint i; i &lt; _owners.length; i++) {
+            address owner = _owners[i];
+            require(owner != address(0), "Invalid owner");// Prevents zero addresses or duplicates during deploymen
+            require(!isOwner[owner], "Owner not unique");
+            isOwner[owner] = true;
+            owners.push(owner);
+        }
+
+        required = _required;
+    }
+
+    // --- Receive Ether ---
+    receive() external payable {
+        emit Deposit(msg.sender, msg.value);
+    }
+
+    // --- Core Functions ---
+    function submitTransaction(
+        address _to,
+        uint _value,
+        bytes memory _data
+    ) public onlyOwner {
+        require(_to != address(this), "Can't call self");// Prevents internal calls to the contract itself.
+        require(transactions.length &lt; 1000, "Too many pending transactions");// Limit the number of pending transactions to prevent spamming
+
+        uint txIndex = transactions.length;
+
+        transactions.push(
+            Transaction({
+                to: _to,
+                value: _value,
+                data: _data,
+                executed: false,
+                numConfirmations: 0,
+                timestamp: block.timestamp
+            })
+        );
+
+        emit Submit(txIndex, _to, _value, _data);
+    }
+
+    function confirmTransaction(
+        uint _txIndex
+    )
+        public
+        onlyOwner
+        txExists(_txIndex)
+        notExecuted(_txIndex)
+        notConfirmed(_txIndex)
+    {
+        Transaction storage transaction = transactions[_txIndex];
+        transaction.numConfirmations += 1;
+        isConfirmed[_txIndex][msg.sender] = true;
+
+        emit Confirm(_txIndex, msg.sender);
+    }
+
+    function executeTransaction(
+        uint _txIndex
+    ) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) nonReentrant {
+        Transaction storage transaction = transactions[_txIndex];
+
+        require(
+            transaction.numConfirmations &gt;= required,
+            "Not enough confirmations"
+        );
+
+        transaction.executed = true;
+
+        (bool success, ) = transaction.to.call{value: transaction.value}(
+            transaction.data
+        );
+        require(success, "Tx failed");
+
+        emit Execute(_txIndex);
+    }
+
+    function revokeConfirmation(
+        uint _txIndex
+    ) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) {
+        require(isConfirmed[_txIndex][msg.sender], "Tx not confirmed");
+
+        //Adds a 30-second delay before the same owner can revoke
+        require(
+            block.timestamp &gt; lastRevokeTime[msg.sender] + 30,
+            "Revoke cooldown"
+        );
+        lastRevokeTime[msg.sender] = block.timestamp;
+
+        Transaction storage transaction = transactions[_txIndex];
+        transaction.numConfirmations -= 1;
+        isConfirmed[_txIndex][msg.sender] = false;
+
+        emit Revoke(_txIndex, msg.sender);
+    }
+
+    // --- View Functions ---
+    function getOwners() public view returns (address[] memory) {
+        return owners;
+    }
+
+    function getTransactionCount() public view returns (uint) {
+        return transactions.length;
+    }
+
+    function getTransaction(
+        uint _txIndex
+    )
+        public
+        view
+        returns (
+            address to,
+            uint value,
+            bytes memory data,
+            bool executed,
+            uint numConfirmations
+        )
+    {
+        Transaction storage transaction = transactions[_txIndex];
+        return (
+            transaction.to,
+            transaction.value,
+            transaction.data,
+            transaction.executed,
+            transaction.numConfirmations
+        );
+    }
+}
+
+</code></pre>
+
+<h3 id="how-it-works">How it works:</h3>
+
+<p>Let’s say the company wants to send 10 ETH to a freelancer for development work. But to ensure security and agreement, at least 2 directors must approve before the money is sent.</p>
+
+<p><strong>steps</strong>:</p>
+
+<p>1.Deployment:
+Alice deploys the MultisigWallet contract with:</p>
+
+<p>Owners: [Nithin, uday, rocky]</p>
+
+<p>Required confirmations: 2</p>
+<pre><code class="language-solidity">   MultisigWallet([ Nithin, uday, rocky], 2)
+</code></pre>
+
+<p>2.Fund the Wallet:
+Anyone (e.g., the company) sends ETH to the wallet.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   It emits a Deposit event.
+```solidity
+send 20 ETH to MultisigWallet address
+
+``` 3. Submit a Transaction: Nithin wants to pay a freelancer.
+</code></pre></div></div>
+
+<p>he submits a transaction to send 10 ETH to Dev.</p>
+
+<pre><code class="language-solidity">  submitTransaction(to: Dev, value: 10 ETH, data: "")
+
+</code></pre>
+<p>This is recorded in the contract as a Transaction object:</p>
+
+<blockquote>
+  <p>Not yet executed.</p>
+</blockquote>
+
+<blockquote>
+  <p>Has 0 confirmations.</p>
+</blockquote>
+
+<p>Submit event is emitted with txIndex = 0.</p>
+
+<p>4.Confirm the Transaction:
+Uday agrees with the transaction and confirms it.</p>
+<pre><code class="language-solidity">confirmTransaction(0)
+</code></pre>
+
+<p>The number of confirmations increases to 1.</p>
+
+<p>Confirm event is emitted.</p>
+
+<p>Rocky also confirms:</p>
+<pre><code class="language-solidity">confirmTransaction(0)
+</code></pre>
+<p>Now it has 2 confirmations — which meets the required threshold.</p>
+
+<p>Confirm event is emitted again.</p>
+
+<p>5.Execute the Transaction:
+Anyone of the owners (say NITHIN again) can now call:</p>
+<pre><code class="language-solidity">executeTransaction(0)
+
+</code></pre>
+<p>Contract checks:</p>
+
+<blockquote>
+  <p>Is confirmed by 2 owners?</p>
+</blockquote>
+
+<blockquote>
+  <p>Is it not already executed?</p>
+</blockquote>
+
+<blockquote>
+  <p>If checks pass, the 10 ETH is sent to the freelancer.</p>
+</blockquote>
+
+<blockquote>
+  <p>Execute event is emitted.</p>
+</blockquote>
+
+<h3 id="summary">Summary:</h3>
+
+<p>Why use a Multisig Wallet?</p>
+<blockquote>
+  <p>Trustless collaboration: No single person has full control.</p>
+</blockquote>
+
+<blockquote>
+  <p>Security: Reduces the risk of fund theft even if one owner is compromised.</p>
+</blockquote>
+
+<blockquote>
+  <p>Transparency: On-chain confirmations and log</p>
+</blockquote>
+
+
+  </div><a class="u-url" href="/analysis/2025/04/15/Multisig.html" hidden></a>
+</article>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const preBlocks = document.querySelectorAll('pre');
+            preBlocks.forEach(pre => {
+                if (pre.parentNode.classList.contains('code-container')) return; // Avoid re-wrapping
+                const container = document.createElement('div');
+                container.className = 'code-container';
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.textContent = 'Copy';
+                pre.parentNode.insertBefore(container, pre);
+                container.appendChild(pre);
+                container.appendChild(copyButton);
+                copyButton.addEventListener('click', () => {
+                    const code = pre.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyButton.textContent = 'Copy';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
