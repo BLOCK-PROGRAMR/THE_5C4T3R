@@ -9,6 +9,7 @@ url: "https://BLOCK-PROGRAMR.github.io"
 
 plugins:
   - jekyll-feed
+  - jekyll-tagging
 
 
 tag_permalink_style: pretty
