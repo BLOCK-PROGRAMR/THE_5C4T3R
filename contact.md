@@ -6,34 +6,17 @@ permalink: /contact/
 
 <div class="home">
 
-  <h1>Contact Me</h1>
+    <h3>Contact Me</h3>
 
-  <p style="font-size: 1rem; color: #CCCCCC;">
-    Posted on 2025-06-23
-  </p>
+    <p>
+        Feel free to reach out. You can find me on the following platforms:
+    </p>
 
-  <p>
-    Hey, I'm <strong>Nithinkumar Pedda</strong> — also known as <strong>5C4T3R</strong> or <strong>BLOCK-PROGRAMR</strong>.
-  </p>
-
-  <p>
-    I work on smart contract security, play CTFs, and build Web3 things.<br/>
-    If you’re a builder, auditor, or just a curious one, feel free to reach out:
-  </p>
-
-  <ul style="list-style: none; padding-left: 0;">
-  <li> GitHub: <a href="https://github.com/BLOCK-PROGRAMR">BLOCK-PROGRAMR</a></li>
-  <li>Twitter: <a href="https://x.com/0x_Scater">0x_Scater</a></li>
-  <li>LinkedIn: <a href="https://linkedin.com/in/5C4T3R">5C4T3R</a></li>
-  <li>Email: <a href="mailto:0xscater@gmail.com">0xscater@gmail.com</a></li>
-</ul>
-
-
-  <hr style="border: 0; border-top: 1px solid #333; margin: 2rem 0;" />
-
-  <p style="font-style: italic; color: #888;">
-    "Secure the Web3."  
-    <br>— ScateR
-  </p>
+    <ul>
+        <li><strong>Email:</strong> <a href="mailto:0xscater@gmail.com">0xscater@gmail.com</a></li>
+        <li><strong>GitHub:</strong> <a href="https://github.com/BLOCK-PROGRAMR">BLOCK-PROGRAMR</a></li>
+        <li><strong>Twitter:</strong> <a href="https://x.com/0x_Scater">0x_Scater</a></li>
+        <li><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/5C4T3R">5C4T3R</a></li>
+    </ul>
 
 </div>
