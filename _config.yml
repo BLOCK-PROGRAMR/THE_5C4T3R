@@ -9,8 +9,10 @@ url: "https://BLOCK-PROGRAMR.github.io"
 
 plugins:
   - jekyll-feed
-  - jekyll-tagging
+  # - jekyll-tagging
 
+# Add this to help Jekyll load plugins from bundler
+plugins_dir: _plugins
 
 tag_permalink_style: pretty
 
