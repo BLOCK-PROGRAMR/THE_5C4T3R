@@ -11,8 +11,16 @@ plugins:
   - jekyll-feed
   # - jekyll-tagging
 
-# Add this to help Jekyll load plugins from bundler
-plugins_dir: _plugins
+collections:
+  projects:
+    output: true
+    permalink: /projects/:title/
+  analysis:
+    output: true
+    permalink: /analysis/:title/
+  audits:
+    output: true
+    permalink: /analysis/:title/
 
 tag_permalink_style: pretty
 

@@ -10,6 +10,7 @@ permalink: /writeups/
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a> - {{ post.date | date: "%Y-%m-%d" }}
     </li>
+    <br/>
   {% endfor %}
 </ul>
 
