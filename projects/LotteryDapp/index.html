@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scater </title>
+    <title>LotteryDapp</title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         /* --- FONTS --- */
@@ -213,7 +213,58 @@
     </header>
 
     <main>
-        <p>Scater Labs is a research collective where we audit smart contracts, write security tools, and contribute to Web3 security…</p>
+        <h1 id="lotterydapp--secure-fair-blockchain-lottery">LotteryDapp — Secure, Fair Blockchain Lottery</h1>
+
+<h2 id="overview">Overview</h2>
+<p><strong>LotteryDapp</strong> is a blockchain-based lottery where players join by paying an entry fee.<br />
+At set intervals, a random winner is picked using <strong>Chainlink VRF</strong>, ensuring results are provably fair.<br />
+No central authority controls the draw or payouts — all logic runs in a public smart contract.</p>
+
+<hr />
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li><strong>Provably Fair Randomness</strong> — Winner selected via Chainlink VRF.</li>
+  <li><strong>Automated Draws</strong> — Supports Chainlink Keepers or manual triggers.</li>
+  <li><strong>Simple Entry</strong> — Call <code class="language-plaintext highlighter-rouge">enter()</code> with the entry fee to join.</li>
+  <li><strong>Full Pot Payout</strong> — Winner receives the collected funds.</li>
+  <li><strong>Event Tracking</strong> — Emits events for entries, draws, and payouts.</li>
+  <li><strong>Live Frontend</strong> — React.js UI showing pot size, players, and past winners.</li>
+</ul>
+
+<hr />
+
+<h2 id="security-highlights">Security Highlights</h2>
+<ul>
+  <li><strong>Randomness Integrity</strong> — No block-based randomness; VRF prevents prediction or manipulation.</li>
+  <li><strong>Safe Payouts</strong> — Uses Checks-Effects-Interactions pattern with optional pull payments.</li>
+  <li><strong>Access Control</strong> — Only authorized admin can change key settings; ownership can be renounced.</li>
+  <li><strong>Gas Safety</strong> — No unbounded loops; player limit keeps transactions efficient.</li>
+  <li><strong>Recovery Mode</strong> — Handles oracle failure with refund or manual draw options.</li>
+</ul>
+
+<hr />
+
+<h2 id="limitations">Limitations</h2>
+<ul>
+  <li><strong>Sybil Risk</strong> — One address = one entry, but users can create multiple addresses.</li>
+  <li><strong>Oracle Dependency</strong> — Requires Chainlink VRF for randomness; fallback needed if unavailable.</li>
+</ul>
+
+<hr />
+
+<h2 id="tech-stack">Tech Stack</h2>
+<ul>
+  <li>Solidity — Core lottery logic.</li>
+  <li>Hardhat — Development &amp; testing.</li>
+  <li>Ethers.js — Blockchain interaction.</li>
+  <li>React.js — Frontend UI.</li>
+  <li>Chainlink VRF + Keepers — Randomness &amp; automation.</li>
+</ul>
+
+<hr />
+
+<p>🔗 <a href="https://github.com/BLOCK-PROGRAMR/LOTTERYDAP">GitHub Repository</a></p>
 
     </main>
 

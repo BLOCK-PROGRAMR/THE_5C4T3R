@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Projects</title>
+    <title>Voting Application</title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         /* --- FONTS --- */
@@ -213,77 +213,56 @@
     </header>
 
     <main>
-        <div class="home">
-  <h1>Projects</h1>
-  <div class="project-grid">
-    
-    
-    
-      <a href="/projects/DwacraProtocol/" class="project-box">
-        <h2>DwacraProtocol</h2>
-        <p>2025-05-06 00:00:00 +0000</p>
-        <p>A protocol where anyone can request and receive funds on-chain.</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Ethereum</small>
-        
-      </a>
-    
-      <a href="/projects/DSCToken/" class="project-box">
-        <h2>DSC Token</h2>
-        <p>2024-06-20 00:00:00 +0000</p>
-        <p>ERC-20 token pegged to Indian Rupee (INR)</p>
-        
-          <small><strong>Tech:</strong> Solidity, Ethereum, Foundry</small>
-        
-      </a>
-    
-      <a href="/projects/FundMe/" class="project-box">
-        <h2>Fund Me</h2>
-        <p>2024-03-15 00:00:00 +0000</p>
-        <p>ETH funding smart contract with real-time ETH/USD conversion</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Chainlink</small>
-        
-      </a>
-    
-      <a href="/projects/EmotionNFT/" class="project-box">
-        <h2>Emotion NFT</h2>
-        <p>2023-10-07 00:00:00 +0000</p>
-        <p>Driven NFT based on Mood</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Ethers.js, Anvil</small>
-        
-      </a>
-    
-      <a href="/projects/DecentralizedVoting/" class="project-box">
-        <h2>Voting Application</h2>
-        <p>2023-09-25 00:00:00 +0000</p>
-        <p>Decentralized, tamper-resistant voting</p>
-        
-          <small><strong>Tech:</strong> Solidity, Hardhat, Ethers.js, React.js, MetaMask</small>
-        
-      </a>
-    
-      <a href="/projects/LotteryDapp/" class="project-box">
-        <h2>LotteryDapp</h2>
-        <p>2023-07-21 00:00:00 +0000</p>
-        <p>A decentralized, trustless Lottery Dapp</p>
-        
-          <small><strong>Tech:</strong> Solidity, Hardhat, ethers.js, React.js, Chainlink</small>
-        
-      </a>
-    
-      <a href="/projects/OptimusNFT/" class="project-box">
-        <h2>OptimusNFT</h2>
-        <p>2023-06-05 00:00:00 +0000</p>
-        <p>ERC721 Token - Optimus Testing NFT</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Ethereum</small>
-        
-      </a>
-    
-  </div>
-</div>
+        <h1 id="voting-application--on-chain-secure-election">Voting Application — On-Chain Secure Election</h1>
+
+<h2 id="overview">Overview</h2>
+<p>The <strong>Voting Application</strong> is a blockchain-based election system that records every vote directly on Ethereum.<br />
+It supports two fixed candidates — <strong>YCP</strong> and <strong>TDP</strong> — and ensures results cannot be altered after deployment.<br />
+Users connect with <strong>MetaMask</strong> to vote, and results are viewable in real time.</p>
+
+<hr />
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li><strong>Immutable Candidates</strong> — Candidate list is set at deployment and cannot be changed.</li>
+  <li><strong>One Vote per Address</strong> — Smart contract blocks double voting using a voter tracking mapping.</li>
+  <li><strong>Transparent Results</strong> — Anyone can view vote counts on-chain without a middleman.</li>
+  <li><strong>No Admin Control</strong> — No reset, override, or privileged vote functions exist.</li>
+  <li><strong>MetaMask + React Frontend</strong> — Simple UI for voting and viewing live tallies.</li>
+</ul>
+
+<hr />
+
+<h2 id="security-highlights">Security Highlights</h2>
+<ul>
+  <li><strong>Vote Integrity</strong> — All votes are permanent and public on-chain records.</li>
+  <li><strong>Double-Vote Prevention</strong> — Once an address votes, further attempts revert.</li>
+  <li><strong>Admin Abuse Prevention</strong> — Contract ownership is renounced after deployment.</li>
+  <li><strong>DoS Resistance</strong> — No heavy loops in voting or tallying; all reads are O(1).</li>
+</ul>
+
+<hr />
+
+<h2 id="limitations">Limitations</h2>
+<ul>
+  <li><strong>Sybil Attacks</strong> — One address = one vote, but multiple addresses can be created without identity checks.</li>
+  <li><strong>Public Votes</strong> — No privacy; votes are linked to Ethereum addresses.</li>
+</ul>
+
+<hr />
+
+<h2 id="tech-stack">Tech Stack</h2>
+<ul>
+  <li>Solidity — Voting logic.</li>
+  <li>Hardhat — Development &amp; testing.</li>
+  <li>Ethers.js — Blockchain interaction.</li>
+  <li>React.js + Tailwind CSS — Frontend display.</li>
+  <li>MetaMask — Authentication &amp; signing.</li>
+</ul>
+
+<hr />
+
+<p>🔗 <a href="https://github.com/BLOCK-PROGRAMR/Block-vote">GitHub Repository</a></p>
 
     </main>
 

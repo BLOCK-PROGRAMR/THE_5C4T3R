@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scater Labs</title>
+    <title>Fund Me</title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         /* --- FONTS --- */
@@ -213,7 +213,55 @@
     </header>
 
     <main>
-        <p>Scater Labs is a research collective where we audit smart contracts, write security tools, and contribute to Web3 security…</p>
+        <h1 id="fund-me--eth-crowdfunding-with-price-feeds">Fund Me — ETH Crowdfunding with Price Feeds</h1>
+
+<h2 id="overview">Overview</h2>
+<p><strong>Fund Me</strong> is a Solidity-based smart contract that accepts ETH contributions and calculates their USD value in real time using a <strong>Chainlink ETH/USD price feed</strong>.<br />
+It is built and deployed using <strong>Foundry</strong> — a fast, modular Ethereum development toolkit written in Rust.</p>
+
+<hr />
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li><strong>Fund Contract</strong> — Users send ETH via the <code class="language-plaintext highlighter-rouge">fund()</code> function.</li>
+  <li><strong>USD Conversion</strong> — Real-time price data from Chainlink oracles.</li>
+  <li><strong>Owner Withdraw</strong> — Only the contract owner can withdraw collected funds.</li>
+  <li><strong>Minimum Funding Requirement</strong> — Enforces a minimum USD amount before accepting contributions.</li>
+</ul>
+
+<hr />
+
+<h2 id="tech-stack">Tech Stack</h2>
+<ul>
+  <li><strong>Solidity</strong> — Smart contract logic.</li>
+  <li><strong>Foundry</strong> — Development, testing, and deployment.</li>
+  <li><strong>Chainlink Price Feeds</strong> — ETH/USD conversion.</li>
+  <li><strong>Sepolia Testnet</strong> — Deployment and testing network.</li>
+</ul>
+
+<hr />
+
+<h2 id="security-highlights">Security Highlights</h2>
+<ul>
+  <li><strong>Access Control</strong> — Only the owner can withdraw funds.</li>
+  <li><strong>Price Feed Validation</strong> — Reliable Chainlink oracle data.</li>
+  <li><strong>Gas Efficiency</strong> — Optimized contract structure.</li>
+  <li><strong>Test Coverage</strong> — Unit tests for funding, withdrawal, and price conversion logic.</li>
+</ul>
+
+<hr />
+
+<h2 id="typical-workflow">Typical Workflow</h2>
+<ol>
+  <li><strong>Fund</strong> — User calls <code class="language-plaintext highlighter-rouge">fund()</code> with ETH.</li>
+  <li><strong>Price Check</strong> — Contract checks USD value using Chainlink.</li>
+  <li><strong>Store Contribution</strong> — Records sender and amount.</li>
+  <li><strong>Withdraw</strong> — Owner retrieves total funds.</li>
+</ol>
+
+<hr />
+
+<p>📦 <a href="https://github.com/BLOCK-PROGRAMR/FundTest">Github</a></p>
 
     </main>
 

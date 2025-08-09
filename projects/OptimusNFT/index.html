@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Projects</title>
+    <title>OptimusNFT</title>
     <link rel="stylesheet" href="/assets/css/style.css">
     <style>
         /* --- FONTS --- */
@@ -213,77 +213,45 @@
     </header>
 
     <main>
-        <div class="home">
-  <h1>Projects</h1>
-  <div class="project-grid">
-    
-    
-    
-      <a href="/projects/DwacraProtocol/" class="project-box">
-        <h2>DwacraProtocol</h2>
-        <p>2025-05-06 00:00:00 +0000</p>
-        <p>A protocol where anyone can request and receive funds on-chain.</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Ethereum</small>
-        
-      </a>
-    
-      <a href="/projects/DSCToken/" class="project-box">
-        <h2>DSC Token</h2>
-        <p>2024-06-20 00:00:00 +0000</p>
-        <p>ERC-20 token pegged to Indian Rupee (INR)</p>
-        
-          <small><strong>Tech:</strong> Solidity, Ethereum, Foundry</small>
-        
-      </a>
-    
-      <a href="/projects/FundMe/" class="project-box">
-        <h2>Fund Me</h2>
-        <p>2024-03-15 00:00:00 +0000</p>
-        <p>ETH funding smart contract with real-time ETH/USD conversion</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Chainlink</small>
-        
-      </a>
-    
-      <a href="/projects/EmotionNFT/" class="project-box">
-        <h2>Emotion NFT</h2>
-        <p>2023-10-07 00:00:00 +0000</p>
-        <p>Driven NFT based on Mood</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Ethers.js, Anvil</small>
-        
-      </a>
-    
-      <a href="/projects/DecentralizedVoting/" class="project-box">
-        <h2>Voting Application</h2>
-        <p>2023-09-25 00:00:00 +0000</p>
-        <p>Decentralized, tamper-resistant voting</p>
-        
-          <small><strong>Tech:</strong> Solidity, Hardhat, Ethers.js, React.js, MetaMask</small>
-        
-      </a>
-    
-      <a href="/projects/LotteryDapp/" class="project-box">
-        <h2>LotteryDapp</h2>
-        <p>2023-07-21 00:00:00 +0000</p>
-        <p>A decentralized, trustless Lottery Dapp</p>
-        
-          <small><strong>Tech:</strong> Solidity, Hardhat, ethers.js, React.js, Chainlink</small>
-        
-      </a>
-    
-      <a href="/projects/OptimusNFT/" class="project-box">
-        <h2>OptimusNFT</h2>
-        <p>2023-06-05 00:00:00 +0000</p>
-        <p>ERC721 Token - Optimus Testing NFT</p>
-        
-          <small><strong>Tech:</strong> Solidity, Foundry, Ethereum</small>
-        
-      </a>
-    
-  </div>
-</div>
+        <h1 id="optimusnft--secure-erc-721-deployment">OptimusNFT — Secure ERC-721 Deployment</h1>
+
+<h2 id="overview">Overview</h2>
+<p><strong>OptimusNFT</strong> is a custom <strong>ERC-721</strong> NFT contract built with <strong>Foundry</strong> and deployed on the Ethereum Goerli testnet.<br />
+It integrates with <strong>OpenSea</strong> for marketplace compatibility and focuses on <strong>security-first design</strong> — preventing common NFT vulnerabilities through strict access controls, immutable metadata, and safe minting logic.</p>
+
+<hr />
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+  <li><strong>ERC-721 + ERC-2981</strong> — NFT standard with royalty support.</li>
+  <li><strong>Safe Public Minting</strong> — Supply cap and price validation.</li>
+  <li><strong>Marketplace Ready</strong> — IPFS-hosted metadata for decentralization.</li>
+  <li><strong>Immutable Metadata</strong> — Prevents post-deployment tampering.</li>
+</ul>
+
+<hr />
+
+<h2 id="security-highlights">Security Highlights</h2>
+<ul>
+  <li><strong>Reentrancy Prevention</strong> — CEI pattern + <code class="language-plaintext highlighter-rouge">nonReentrant</code>.</li>
+  <li><strong>Strict Access Control</strong> — <code class="language-plaintext highlighter-rouge">Ownable</code> for admin functions.</li>
+  <li><strong>No Unbounded Loops</strong> — Avoids gas DoS risks.</li>
+  <li><strong>Metadata Protection</strong> — Immutable base URI after deployment.</li>
+</ul>
+
+<hr />
+
+<h2 id="tech-stack">Tech Stack</h2>
+<ul>
+  <li>Solidity — Smart contract logic.</li>
+  <li>Foundry — Development &amp; testing.</li>
+  <li>Ethereum (Goerli) — Deployment network.</li>
+  <li>IPFS — Metadata storage.</li>
+</ul>
+
+<hr />
+
+<p>🔗 <a href="https://github.com/BLOCK-PROGRAMR/Optimus_NFT">GitHub Repository</a></p>
 
     </main>
 
